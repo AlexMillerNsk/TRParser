@@ -7,16 +7,13 @@
 
   <ItemGroup>
     <None Include="Grafik.xlsx" />
-    <Compile Include="File1.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
-  <ItemGroup />
-
   <ItemGroup>
     <PackageReference Include="ExcelProvider" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
+    <PackageReference Include="FSharp.Json" Version="0.4.1" />
   </ItemGroup>
 
 </Project>

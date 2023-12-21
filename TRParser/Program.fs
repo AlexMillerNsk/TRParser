@@ -1,10 +1,10 @@
 ﻿
 open FSharp.Interop.Excel
-open Microsoft.Office.Interop.Excel
+open FSharp.Json
 open Types
 
 
-type DataTypesTest = ExcelFile<"122.xlsx",ForceString=true>
+type DataTypesTest = ExcelFile<"Grafik.xlsx",ForceString=true>
 type Row = DataTypesTest.Row
 
 
@@ -44,10 +44,16 @@ let parseProduction (x:int) (r:Row) = validateDebit (r.GetValue(x))
 //let myFun() =
 //    for index in {13..23} do parseProduction index (r:Row)
         
-let myFun x =
-    for index in {12..41} do 
-    let process = parseProduction index x  
-    let itog = process
+let createProcess (x:Row) =
+    for index in {13..43} do 
+    let duration = (parseProduction index x).Value
+    let date index = 
+        let day = index - 11
+        if day <10 then $"0{day}" else  string day
+    let day = date index
+    let itog = WellInfoConstructor.Create x.скв x.куст x.процесс duration $"{day}.07.2023"
+    let json = Json.serialize itog
+    printfn "%s" json
 
 
 
@@ -57,7 +63,7 @@ let parseProcess (r:Row) =
                                       printf $"{processName}"                                     
     | "Замер дебита"               -> let processName = "MeasuremebtDebit"
                                       printf $"{processName}"
-                                      myFun r
+                                      createProcess r
     | "замер забойного"            -> let processName = "BottomHolePressure"
                                       printf $"{processName}"
     | "Фрезерование Этанол"        -> let processName = "Milling"
@@ -79,7 +85,7 @@ let parseProcess (r:Row) =
 
 let row = file.Data |> Seq.filter notIsNull |> List.ofSeq
 
-
+let row1 = file.Data |> Seq.filter notIsNull |> List.ofSeq|>List.map (fun x -> parseProcess x)
 
 
 
@@ -89,4 +95,3 @@ let row = file.Data |> Seq.filter notIsNull |> List.ofSeq
 //myFun r1
 //myFun r2
 //myFun r3
-let row1 = file.Data |> Seq.filter notIsNull |> List.ofSeq|>List.map (fun x -> myFun x)

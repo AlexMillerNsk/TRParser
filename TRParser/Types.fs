@@ -15,8 +15,8 @@ type Well(info: WellInfo) =
 
 module WellInfoConstructor =
     let Create well pad state datestart duration =
-        { Well = well
-          Pad = pad
-          Process = state 
-          DateStart = datestart
-          Duration = duration }
+        { Well = string well
+          Pad = string pad
+          Process = string state 
+          DateStart = string datestart
+          Duration =string duration }
