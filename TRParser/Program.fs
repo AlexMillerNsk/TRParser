@@ -1,0 +1,92 @@
+﻿
+open FSharp.Interop.Excel
+open Microsoft.Office.Interop.Excel
+open Types
+
+
+type DataTypesTest = ExcelFile<"122.xlsx",ForceString=true>
+type Row = DataTypesTest.Row
+
+
+
+
+//Make convenience methods
+
+let file = new DataTypesTest()
+
+
+
+let notIsNull (row:Row) = row.``№ п/п`` |> isNull |> not
+
+let validate x = 
+    let w = string x
+    match w with
+    | "0"       -> None
+    | ""        -> None
+    | "Рзаб"    -> None
+    | "тех огр" -> None
+    | _         -> printf $"{x}"
+                   Some x 
+             
+let validateDebit (x:obj) = 
+    let w = x|>string
+    match w with
+    | "0"    -> None
+    | "12"   -> printfn "12"
+                Some 12
+    | "24"   -> printfn "24"
+                Some 24
+    | _    -> None
+
+ 
+let parseProduction (x:int) (r:Row) = validateDebit (r.GetValue(x)) 
+
+//let myFun() =
+//    for index in {13..23} do parseProduction index (r:Row)
+        
+let myFun x =
+    for index in {12..41} do 
+    let process = parseProduction index x  
+    let itog = process
+
+
+
+let parseProcess (r:Row) = 
+    match r.процесс with
+    | "Подъем флюида"              -> let processName = "FluidLifting"
+                                      printf $"{processName}"                                     
+    | "Замер дебита"               -> let processName = "MeasuremebtDebit"
+                                      printf $"{processName}"
+                                      myFun r
+    | "замер забойного"            -> let processName = "BottomHolePressure"
+                                      printf $"{processName}"
+    | "Фрезерование Этанол"        -> let processName = "Milling"
+                                      printf $"{processName}"
+    | "фрезерование Кредит-Альянс" -> let processName = "Milling"
+                                      printf $"{processName}"
+    | "фрезерование ОТК"           -> let processName = "Milling"
+                                      printf $"{processName}"
+    | "метанольная обработка"      -> let processName = "Methanol"
+                                      printf $"{processName}"
+    | "тепловая обработка"         -> let processName = "Treasurement"
+                                      printf $"{processName}"
+    | "Отбор проб"                 -> let processName = "zabil kak "
+                                      printf $"{processName}"
+    | _                            -> let processName = "something wrong"
+                                      printf $"{processName}"
+
+//let row = file.Data |> Seq.filter notIsNull |> List.ofSeq|>List.head|> List.map (fun x -> parseProduction x)
+
+let row = file.Data |> Seq.filter notIsNull |> List.ofSeq
+
+
+
+
+
+
+
+//myFun r0
+//myFun r1
+//myFun r2
+//myFun r3
+let row1 = file.Data |> Seq.filter notIsNull |> List.ofSeq|>List.map (fun x -> myFun x)
