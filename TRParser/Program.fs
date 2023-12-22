@@ -44,16 +44,10 @@ let parseProduction (x:int) (r:Row) = validateDebit (r.GetValue(x))
 //let myFun() =
 //    for index in {13..23} do parseProduction index (r:Row)
         
-let createProcess (x:Row) =
-    for index in {13..43} do 
-    let duration = (parseProduction index x).Value
-    let date index = 
-        let day = index - 11
-        if day <10 then $"0{day}" else  string day
-    let day = date index
-    let itog = WellInfoConstructor.Create x.скв x.куст x.процесс duration $"{day}.07.2023"
-    let json = Json.serialize itog
-    printfn "%s" json
+let myFun x =
+    for index in {12..41} do 
+    let process = parseProduction index x  
+    let itog = process.Value
 
 
 
