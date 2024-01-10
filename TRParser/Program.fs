@@ -46,6 +46,8 @@ let validateFluidSampling (x:obj) =
     | _      -> None 
 
 let parseProduction (validateFunc: obj -> int option) (x:int) (r:Row) = validateFunc (r.GetValue(x)) 
+
+let path = Path.Combine(Path.GetTempPath(), "Sampl546.txt") 
        
 let createProcess func (x:Row) processName =
     for index in {13..43} do 
@@ -55,10 +57,8 @@ let createProcess func (x:Row) processName =
             let day = index - 10
             if day <10 then $"0{day}" else  string day
         let day = date index
-        let wellInfo = WellInfoConstructor.Create x.скв x.куст processName duration $"2023-07-{day} 00:00:00.000 +0700"
-        let json = Json.serialize wellInfo
-        let path =
-            Path.Combine(Path.GetTempPath(), "Sampl546.txt")       
+        let wellInfo = WellInfoConstructor.Create x.скв x.куст processName $"2023-07-{day} 00:00:00.000 +0700" duration
+        let json = Json.serialize wellInfo    
         use sw = new StreamWriter(new FileStream(path, FileMode.Append, FileAccess.Write))
         sw.WriteLineAsync(json)|>ignore
     else ()
@@ -74,6 +74,8 @@ let parseProcess (r:Row) =
                                       createProcess validatePressure r processName
     | "Фрезерование Этанол"        -> let processName = "Milling"
                                       createProcess validateMilling r processName
+    | "фрезерование Этанол"        -> let processName = "Milling"
+                                      createProcess validateMilling r processName
     | "фрезерование Кредит-Альянс" -> let processName = "Milling"
                                       createProcess validateMilling r processName
     | "фрезерование ОТК"           -> let processName = "Milling"
@@ -84,7 +86,7 @@ let parseProcess (r:Row) =
                                       printf "1"
     | "Отбор проб"                 -> let processName = "FluidSampling"
                                       createProcess validateFluidSampling r processName
-    | _                            -> printf "smthn wrong"
+    | _ as xt                      -> printf $"{xt}"
                                       
 let row1 = file.Data |> Seq.filter notIsNull |> List.ofSeq|>List.map (fun x -> parseProcess x)
 
